@@ -86,6 +86,10 @@ Read above section regarding encryption and **running your own local instance**
 You only need to sync your timetable when theres an update to your timetable. ie: New semester, change of venue.
 Other than that, the bot should detect the current day of the week and pull the entire week's timetable automatically with /timetable.
 
+The flow of this program is as such.
+
+Register -> Update -> Rips timetable to Database -> Pull out with /timetable.
+
 **Your bot sucks! It didnt tell me that I had a class and I missed it!**
 
 Read the disclaimer, and notify me so that I can fix the bug.

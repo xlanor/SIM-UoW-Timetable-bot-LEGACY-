@@ -20,11 +20,13 @@ And also to familarize myself with mongoDB
 
 However, if you're using the instance that I am hosting, please read the following sentence
 
-Although you are asked to enter your login credentials, At no point of time whatsoever does Cronus store your password **in plaintext**to the database.
+Although you are asked to enter your login credentials, At no point of time whatsoever does Cronus store your password **in plaintext** to the database.
 
 Cronus encrypts your password with a key of your choice with AES-256 and requires the key to decrypt the password each time it syncs. The module can be found under modules/encryption.py
 
-The stored password is the **encrypted text**. You are free to audit the source code.
+The stored password is the **encrypted text**. The key is kept by **you**. This is why you will need to enter the key each time to decrypt it on sync.
+
+You are free to audit the source code.
 
 You should take note that this is not the most secure method, but is the most convenient method for users.
 
@@ -44,7 +46,7 @@ All derivatives works not intended for personal use must be released into the pu
 
 A sample of Cronus is up on telegram at [SIM-UoW Timetable Bot](https://t.me/Uow_sim_tt_bot)
 
-**Due to the sensetive nature of the bot, I strongly encourage users to run their own instance of this bot instead of relying on the one I'm hosting.**
+**Due to the sensitive nature of the bot, I strongly encourage users to run their own instance of this bot instead of relying on the one I'm hosting.**
 
 This bot has only been tested on student University of Wollongong Timetables that are currently going through a 2 module trimester.
 

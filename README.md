@@ -6,7 +6,7 @@ A telegram bot for ripping timetables from SIM Connect built in python3
 
 This bot is **not** an official bot sanctioned by either the University of Wollongong or the Singapore Institute of Management.
 
-Please read the [Disclaimer](Disclaimer) before proceeding.
+Please read the [Disclaimer](DISCLAIMER.md) before proceeding.
 
 ## Why?
 

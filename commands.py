@@ -109,17 +109,25 @@ class Commands():
 				uid = update.message.from_user.id
 				encryptionkey = update.message.text
 				encryptionkey = encryptionkey.strip()
-				password = user_data['password']
-				encrypted = Encrypt().encrypt(password,encryptionkey,"encrypt")
-				db.timetable.update({"telegram_id":uid},
-									{"$set":{"user_name":user_data['username'],
-											 "encrypted_pass":encrypted}
-									})
-				message = "Sucessfully encrypted and stored your details\n"
-				message += "You may now use /update to get your timetable."
-				update.message.reply_text(message,parse_mode='HTML')
-				user_data.clear()
-				return ConversationHandler.END
+				if len(encryptionkey) <= 16:
+					password = user_data['password']
+					encrypted = Encrypt().encrypt(password,encryptionkey,"encrypt")
+					db.timetable.update({"telegram_id":uid},
+										{"$set":{"user_name":user_data['username'],
+												 "encrypted_pass":encrypted}
+										})
+					message = "Sucessfully encrypted and stored your details\n"
+					message += "You may now use /update to get your timetable."
+					update.message.reply_text(message,parse_mode='HTML')
+					user_data.clear()
+					return ConversationHandler.END
+				else:
+					if not encryptionkey:
+						message = "Please enter an encryption key."
+					else:
+						message = "Please enter an encryption key that is under 17 characters."
+					update.message.reply_text(message,parse_mode='HTML')
+					return KEY
 
 		except:
 			catcherror = traceback.format_exc()
@@ -161,53 +169,58 @@ class Commands():
 				uid = update.message.from_user.id
 				document = db.timetable.find_one({"telegram_id":uid})
 				encryptionkey = update.message.text
-				if document is not None:
-					username = document['user_name']
-					encryptedpass = document['encrypted_pass']
-					decrypted = Encrypt().encrypt(encryptedpass,encryptionkey,"decrypt")
-					if decrypted.strip() != "":
-						resultlist = SIMConnect().timetable(username,decrypted)
-						if resultlist:
-							db.timetable.update({"telegram_id":uid},
-										{"$set":{"class_name":[]}
-										})
-							db.timetable.update({"telegram_id":uid},
-										{"$set":{"last_synced_date":datetime.now()}
-										})
-							for each in resultlist:
-								#convert DT to save to mongo.
-								class_date = datetime.strptime(each['date'], '%d/%m/%Y')
-								class_start = datetime.strptime(each['Start_Time'], '%d/%m/%Y %I:%M%p')
-								class_end = datetime.strptime(each['End_Time'], '%d/%m/%Y %I:%M%p')
-								db.timetable.update({"telegram_id":uid},
-									{"$push":{"class_name":{
-											"name":each['class_name'],
-											"type":each['Type'],
-											"date":class_date,
-											"start_time":class_start,
-											"end_time":class_end,
-											"location":each['Location']}}
-									})
-							no_results = len(resultlist)
-							message = "A total of "
-							message += str(no_results)
-							message += " records has been synced to the database.\n"
-							message += "You may now use /timetable to view your timetable"
-							update.message.reply_text(message,parse_mode='HTML')
-						else:
-							message = "Unable to login \n"
-							message += "Are you sure that your credentials are correct? \n"
-							message += "Try to update your credentials using /register \n"
-							update.message.reply_text(message,parse_mode='HTML')
-						return ConversationHandler.END
-					else:
-						update.message.reply_text("You entered the wrong decryption key, please try again",parse_mode='HTML')
-						return DECRYPT
+				if not encryptionkey.strip():
+					message = "Please enter a proper key!"
+					bot.sendMessage(chat_id = update.message.chat_id, text=message,parse_mode='HTML')
+					return DECRYPT
 				else:
-					message = "Oops, something went wrong \n"
-					message += "We're dispatching a team of trained monkeys to look into this"
-					update.message.reply_text(decrypted,parse_mode='HTML')
-					return ConversationHandler.END
+					if document is not None:
+						username = document['user_name']
+						encryptedpass = document['encrypted_pass']
+						decrypted = Encrypt().encrypt(encryptedpass,encryptionkey,"decrypt")
+						if decrypted.strip() != "":
+							resultlist = SIMConnect().timetable(username,decrypted)
+							if resultlist:
+								db.timetable.update({"telegram_id":uid},
+											{"$set":{"class_name":[]}
+											})
+								db.timetable.update({"telegram_id":uid},
+											{"$set":{"last_synced_date":datetime.now()}
+											})
+								for each in resultlist:
+									#convert DT to save to mongo.
+									class_date = datetime.strptime(each['date'], '%d/%m/%Y')
+									class_start = datetime.strptime(each['Start_Time'], '%d/%m/%Y %I:%M%p')
+									class_end = datetime.strptime(each['End_Time'], '%d/%m/%Y %I:%M%p')
+									db.timetable.update({"telegram_id":uid},
+										{"$push":{"class_name":{
+												"name":each['class_name'],
+												"type":each['Type'],
+												"date":class_date,
+												"start_time":class_start,
+												"end_time":class_end,
+												"location":each['Location']}}
+										})
+								no_results = len(resultlist)
+								message = "A total of "
+								message += str(no_results)
+								message += " records has been synced to the database.\n"
+								message += "You may now use /timetable to view your timetable"
+								update.message.reply_text(message,parse_mode='HTML')
+							else:
+								message = "Unable to login \n"
+								message += "Are you sure that your credentials are correct? \n"
+								message += "Try to update your credentials using /register \n"
+								update.message.reply_text(message,parse_mode='HTML')
+							return ConversationHandler.END
+						else:
+							update.message.reply_text("You entered the wrong decryption key, please try again",parse_mode='HTML')
+							return DECRYPT
+					else:
+						message = "Oops, something went wrong \n"
+						message += "We're dispatching a team of trained monkeys to look into this"
+						update.message.reply_text(decrypted,parse_mode='HTML')
+						return ConversationHandler.END
 
 		except:
 			catcherror = traceback.format_exc()

@@ -236,7 +236,7 @@ class Commands():
 													"date":each['date']})
 
 					if this_week_classes:
-						this_week_classes = sorted(this_week_classes, key=lambda item:item['date'])
+						this_week_classes = sorted(this_week_classes, key=lambda item:item['start_time'])
 						message = "📈 Timetable for the week of <b>"
 						message += datetime.strftime((date.today()-timedelta(days=current_date.weekday())),'%b %d %Y')
 						message += "</b>\n"

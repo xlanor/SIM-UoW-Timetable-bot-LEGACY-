@@ -41,6 +41,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def name(bot,update):
 		try:
@@ -56,6 +57,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def username(bot,update,user_data):
 		try:
@@ -69,6 +71,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def password(bot,update,user_data):
 		try:
@@ -96,6 +99,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def keys(bot,update,user_data):
 		try:
@@ -120,6 +124,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def update(bot,update):
 		try:
@@ -132,6 +137,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def enterkey(bot,update):
 		try:
@@ -141,6 +147,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def decrypt(bot,update):
 		try:
@@ -205,6 +212,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def cancel(bot,update):
 		#cancels conversation state.
@@ -302,6 +310,7 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
 
 	def deleteuser(bot,update):
 		try:
@@ -331,3 +340,4 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END

@@ -20,9 +20,11 @@ And also to familarize myself with mongoDB
 
 However, if you're using the instance that I am hosting, please read the following sentence
 
-Although you are asked to enter your login credentials, At no point of time whatsoever does Cronus store your password to the database.
+Although you are asked to enter your login credentials, At no point of time whatsoever does Cronus store your password **in plaintext**to the database.
 
 Cronus encrypts your password with a key of your choice with AES-256 and requires the key to decrypt the password each time it syncs. The module can be found under modules/encryption.py
+
+The stored password is the **encrypted text**. You are free to audit the source code.
 
 You should take note that this is not the most secure method, but is the most convenient method for users.
 

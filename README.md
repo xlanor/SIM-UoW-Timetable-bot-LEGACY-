@@ -60,6 +60,14 @@ Currently, I'm working on these features
 * Scroll through your timetable - see the next week's, previous weeks, etc
 * A module to calculate the number of classes that you've been absent for and tell you how many more classes you can skip (unsure if this can be done)
 
+
+## Credits
+* [Python-Telegram-Bot](https://github.com/python-telegram-bot/python-telegram-bot)
+* [Selenium](https://pypi.python.org/pypi/selenium)
+* [PhantomJS](https://bitbucket.org/ariya/phantomjs/downloads/)
+* [BeautifulSoup4](https://code.launchpad.net/beautifulsoup/)
+
+
 ## Contact
 
 Open an issue on github or contact me on telegram at @fatalityx

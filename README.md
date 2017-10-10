@@ -74,19 +74,24 @@ Currently, I'm working on these features
 ## F.A.Q
 
 **What is a "Key?"**
+
 Like the name suggests, a key is used to unlock a lock. In this case, a key is used to unlock the encrypted password. It can be any alphanumeric string you want.
 
 **But you're stealing my passwords!**
+
 Read above section regarding encryption and **running your own local instance**
 
 **When do I need to sync? Do I sync it weekly?**
+
 You only need to sync your timetable when theres an update to your timetable. ie: New semester, change of venue.
 Other than that, the bot should detect the current day of the week and pull the entire week's timetable automatically with /timetable.
 
 **Your bot sucks! It didnt tell me that I had a class and I missed it!**
+
 Read the disclaimer, and notify me so that I can fix the bug.
 
 **I read the output wrongly and missed my class!**
+
 User Problem.
 
 

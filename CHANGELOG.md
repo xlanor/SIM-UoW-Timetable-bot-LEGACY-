@@ -1,0 +1,28 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
+- Z will be bumped if there's a patch or bugfix.
+- Y will be bumped with new features (commands)
+- X will be bumped if the code released is no longer backwards compatible with previous versions.
+
+## [Unreleased]
+
+## [Released]
+### [1.1.0] - 2017-10-11
+### Added
+- Added scrolling feature to timetable **beta**
+
+### Changed
+- Fixed validation
+- Restricted key length to 16 and below.
+
+## [1.0.0] - 2017-10-10
+### Added
+- Initial release
+- Returns timetable for the week
+
+### Changed

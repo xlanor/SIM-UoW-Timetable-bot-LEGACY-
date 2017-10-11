@@ -15,3 +15,10 @@ class Tokens():
 	def channel(x):
 		if x == "errorchannel":
 			return "place_your_error_bot_channel_id"
+
+
+	def admin(x):
+		if x in [admin_id]:
+			return "admin"
+		else:
+			return "notadmin"

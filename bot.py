@@ -18,6 +18,8 @@ def Cronus():
 	dispatcher = updater.dispatcher
 	start_handler = CommandHandler('test', Commands.test)
 	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('mega', Commands.mega)
+	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('timetable', Commands.timetable)
 	dispatcher.add_handler(start_handler)
 	conv_handler = ConversationHandler(
@@ -55,6 +57,7 @@ def Cronus():
 		per_user = 'true'
 	)
 	dispatcher.add_handler(conv_handler,3)
+	updater.dispatcher.add_handler(CallbackQueryHandler(Commands.callback))
 	updater.start_polling()
 	updater.idle()
 

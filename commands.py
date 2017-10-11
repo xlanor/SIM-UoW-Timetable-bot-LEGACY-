@@ -4,11 +4,12 @@
 # Cronus commands
 # Written by xlanor
 ##
-import pymongo, traceback,time, calendar
+import pymongo, traceback, calendar
+import time as clock
 from datetime import datetime,timedelta,date,time
 from pymongo import MongoClient
 from tokens import Tokens
-from telegram import ReplyKeyboardMarkup,ChatAction
+from telegram import ReplyKeyboardMarkup,ChatAction,InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,Job,ConversationHandler
 from modules.testlogin import loginTest
 from modules.encryption import Encrypt
@@ -16,6 +17,26 @@ from modules.riptimetable import SIMConnect
 
 NAME,USERNAME,PASSWORD,KEY,ENTERKEY,DECRYPT,DELETEUSER = range(7) #declares states for hermes. Imported in main folder
 class Commands():
+	def mega(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				db = client.timetable
+				uid = update.message.from_user.id
+				message = update.message.text[6:]
+				uid = int(uid)
+				checkadmin = Tokens.admin(uid)
+				if checkadmin == "admin":
+					document = db.timetable.distinct("telegram_id",{"telegram_id":{"$exists":"true"}})
+					for each in document:
+						user_id = int(each)
+						bot.sendMessage(chat_id=user_id, text=message,parse_mode='HTML')
+						clock.sleep(0.5)
+				else:
+					errormessage = "Hey, you don't look like my creator!"
+					update.message.reply_text(errormessage,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
 
 	def register(bot,update):
 		try:
@@ -246,7 +267,13 @@ class Commands():
 					current_date = datetime.combine(current_date, time()) #sets time to midnight.
 					start_date = current_date -timedelta(days=current_date.weekday())
 					end_date = start_date+timedelta(days=6)
+					previous_start_date = start_date-timedelta(days=7)
+					previous_end_date = end_date - timedelta(days=7)
+					next_start_date = start_date+timedelta(days=7)
+					next_end_date = end_date + timedelta(days=7)
 					classes = db.timetable.find_one({"telegram_id":uid},{"class_name":1,"_id":0})
+					previous_date_trigger = ""
+					next_date_trigger = ""
 					for each in classes['class_name']:
 						if start_date <= each['date'] <=end_date:
 							this_week_classes.append({"name":each['name'],
@@ -255,6 +282,11 @@ class Commands():
 													"end_time":each['end_time'],
 													"location":each['location'],
 													"date":each['date']})
+						if previous_start_date <= each['date'] <= previous_end_date:
+							previous_date_trigger = 'pr'+ datetime.strftime(previous_start_date,'%b%d%Y')
+
+						if next_start_date <= each['date'] <= next_end_date:
+							next_date_trigger = 'nx'+datetime.strftime(next_start_date,'%b%d%Y')
 
 					if this_week_classes:
 						this_week_classes = sorted(this_week_classes, key=lambda item:item['start_time'])
@@ -296,7 +328,20 @@ class Commands():
 							else:
 								message += dashmessage
 							counter += 1
-						update.message.reply_text(message,parse_mode='HTML')
+						keyboard = []
+						if previous_date_trigger != "":
+							if next_date_trigger != "":
+								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
+							else:
+								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
+						else:
+							if next_date_trigger != "":
+								keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+
+						reply_markup = InlineKeyboardMarkup(keyboard)
+						print(message)
+						bot.sendMessage(chat_id=update.message.chat_id,reply_markup=reply_markup,text=message,parse_mode='HTML')
+						
 					else:
 						message = "No timetable could be retrieved."
 						update.message.reply_text(message,parse_mode='HTML')
@@ -354,3 +399,103 @@ class Commands():
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
 			return ConversationHandler.END
+	def callback(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				query = update.callback_query
+				callbacktype = query.data[:2]
+				db = client.timetable
+				uid = update.callback_query.from_user.id
+				document = db.timetable.find_one({"telegram_id":uid})
+				if document is not None:
+					this_week_classes = []
+					current_date = datetime.strptime(query.data[2:],'%b%d%Y')
+					start_date = current_date -timedelta(days=current_date.weekday())
+					end_date = start_date+timedelta(days=6)
+					previous_start_date = start_date-timedelta(days=7)
+					previous_end_date = end_date - timedelta(days=7)
+					next_start_date = start_date+timedelta(days=7)
+					next_end_date = end_date + timedelta(days=7)
+					classes = db.timetable.find_one({"telegram_id":uid},{"class_name":1,"_id":0})
+					previous_date_trigger = ""
+					next_date_trigger = ""
+					for each in classes['class_name']:
+						try:
+							if start_date <= each['date'] <=end_date:
+								this_week_classes.append({"name":each['name'],
+														"type":each['type'],
+														"start_time":each['start_time'],
+														"end_time":each['end_time'],
+														"location":each['location'],
+														"date":each['date']})
+							elif previous_start_date <= each['date'] <= previous_end_date:
+								previous_date_trigger = 'pr'+ datetime.strftime(previous_start_date,'%b%d%Y')
+
+							elif next_start_date <= each['date'] <= next_end_date:
+								next_date_trigger = 'nx'+datetime.strftime(next_start_date,'%b%d%Y')
+						except:					
+							catcherror = traceback.format_exc()
+							bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+					if this_week_classes:
+						this_week_classes = sorted(this_week_classes, key=lambda item:item['start_time'])
+						message = "📈 Timetable for the week of <b>"
+						message += datetime.strftime((current_date-timedelta(days=current_date.weekday())),'%b %d %Y')
+						message += "</b>\n"
+						message += "🔃 This timetable was last synced on <b>"
+						message += datetime.strftime(document['last_synced_date'], '%b %d %Y %H:%M')
+						message += "H</b>\n"
+						message += "By using this bot, you agree to the terms and conditions stated in the DISCLAIMER.md on github\n\n"
+						counter = 0
+						while counter <= 6:
+							message += "󠁳📅 <b>"
+							message += calendar.day_name[counter]
+							message += "</b>\n"
+							dashmessage = ""
+							for classes in this_week_classes:
+								if datetime.date(classes['date']).weekday() == counter:
+									dashmessage += "<i>"
+									dashmessage += classes['name']
+									dashmessage += "</i>\n"
+									dashmessage += "Date: "
+									dashmessage += datetime.strftime(classes['date'],'%b %d %Y')
+									dashmessage += "\n"
+									dashmessage += "Type: "
+									dashmessage += classes['type']
+									dashmessage += "\n"
+									dashmessage += "Start Time: "
+									dashmessage += datetime.strftime(classes['start_time'],'%H:%M')
+									dashmessage += "\n"
+									dashmessage += "End Time: "
+									dashmessage += datetime.strftime(classes['end_time'],'%H:%M')
+									dashmessage += "\n"
+									dashmessage += "Location: "
+									dashmessage += classes['location']
+									dashmessage += "\n\n"
+							if not dashmessage.strip():
+								message += "-\n\n"
+							else:
+								message += dashmessage
+							counter += 1
+						keyboard = []
+						if previous_date_trigger != "":
+							if next_date_trigger != "":
+								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
+							else:
+								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
+						else:
+							if next_date_trigger != "":
+								keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+
+						reply_markup = InlineKeyboardMarkup(keyboard)
+						bot.edit_message_text(text=message,chat_id=update.callback_query.message.chat_id,message_id=update.callback_query.message.message_id,reply_markup=reply_markup,parse_mode='HTML')
+					else:
+						message = "No timetable could be retrieved."
+						update.message.reply_text(message,parse_mode='HTML')
+
+				else:
+					message = "Unable to find a timetable tied to this telegram id \n"
+					message += "Please use /register to register your account."
+					update.message.reply_text(message,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')

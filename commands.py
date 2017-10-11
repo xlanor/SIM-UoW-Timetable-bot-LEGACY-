@@ -339,12 +339,32 @@ class Commands():
 								keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
 
 						reply_markup = InlineKeyboardMarkup(keyboard)
-						print(message)
 						bot.sendMessage(chat_id=update.message.chat_id,reply_markup=reply_markup,text=message,parse_mode='HTML')
 						
 					else:
-						message = "No timetable could be retrieved."
-						update.message.reply_text(message,parse_mode='HTML')
+						if (previous_date_trigger != "") or (next_date_trigger != "") :
+							message = "📈 Timetable for the week of <b>"
+							message += datetime.strftime((date.today()-timedelta(days=current_date.weekday())),'%b %d %Y')
+							message += "</b>\n"
+							message += "🔃 This timetable was last synced on <b>"
+							message += datetime.strftime(document['last_synced_date'], '%b %d %Y %H:%M')
+							message += "H</b>\n"
+							message += "By using this bot, you agree to the terms and conditions stated in the DISCLAIMER.md on github\n\n"
+							keyboard = []
+							if previous_date_trigger != "":
+								if next_date_trigger != "":
+									keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
+								else:
+									keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
+							else:
+								if next_date_trigger != "":
+									keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+							message += "You have no classes this week!"
+							reply_markup = InlineKeyboardMarkup(keyboard)
+							bot.sendMessage(chat_id=update.message.chat_id,reply_markup=reply_markup,text=message,parse_mode='HTML')
+						else:
+							message = "No timetable could be retrieved."
+							update.message.reply_text(message,parse_mode='HTML')
 
 				else:
 					message = "Unable to find a timetable tied to this telegram id \n"
@@ -489,8 +509,29 @@ class Commands():
 						reply_markup = InlineKeyboardMarkup(keyboard)
 						bot.edit_message_text(text=message,chat_id=update.callback_query.message.chat_id,message_id=update.callback_query.message.message_id,reply_markup=reply_markup,parse_mode='HTML')
 					else:
-						message = "No timetable could be retrieved."
-						update.message.reply_text(message,parse_mode='HTML')
+						if (previous_date_trigger != "") or (next_date_trigger != "") :
+							message = "📈 Timetable for the week of <b>"
+							message += datetime.strftime((date.today()-timedelta(days=current_date.weekday())),'%b %d %Y')
+							message += "</b>\n"
+							message += "🔃 This timetable was last synced on <b>"
+							message += datetime.strftime(document['last_synced_date'], '%b %d %Y %H:%M')
+							message += "H</b>\n"
+							message += "By using this bot, you agree to the terms and conditions stated in the DISCLAIMER.md on github\n\n"
+							keyboard = []
+							if previous_date_trigger != "":
+								if next_date_trigger != "":
+									keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
+								else:
+									keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
+							else:
+								if next_date_trigger != "":
+									keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+							message += "You have no classes this week!"
+							reply_markup = InlineKeyboardMarkup(keyboard)
+							bot.sendMessage(chat_id=update.message.chat_id,reply_markup=reply_markup,text=message,parse_mode='HTML')
+						else:
+							message = "No timetable could be retrieved."
+							update.message.reply_text(message,parse_mode='HTML')
 
 				else:
 					message = "Unable to find a timetable tied to this telegram id \n"

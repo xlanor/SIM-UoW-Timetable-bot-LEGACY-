@@ -10,17 +10,23 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,Job, Mess
 from tokens import Tokens
 from commands import Commands
 from commands import NAME,USERNAME,PASSWORD,KEY,ENTERKEY,DECRYPT,DELETEUSER
+from datetime import datetime,timedelta
 
 
 def Cronus():
 	print('Cronus online')
 	updater = Updater(token=Tokens.bot_token('live'))
+	j = updater.job_queue
 	dispatcher = updater.dispatcher
 	start_handler = CommandHandler('test', Commands.test)
 	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('mega', Commands.mega)
 	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('timetable', Commands.timetable)
+	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('unsub', Commands.unsubreminder)
+	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('alert', Commands.subscribereminder)
 	dispatcher.add_handler(start_handler)
 	conv_handler = ConversationHandler(
 		entry_points=[CommandHandler('register', Commands.register)],
@@ -57,6 +63,8 @@ def Cronus():
 		per_user = 'true'
 	)
 	dispatcher.add_handler(conv_handler,3)
+	alert_time = datetime.strptime('07:30','%H:%M').time()
+	job_minute = j.run_repeating(Commands.reminder,timedelta(hours=24),alert_time)
 	updater.dispatcher.add_handler(CallbackQueryHandler(Commands.callback))
 	updater.start_polling()
 	updater.idle()

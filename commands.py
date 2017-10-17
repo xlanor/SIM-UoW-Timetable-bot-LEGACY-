@@ -540,3 +540,90 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+
+	def unsubreminder(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				db = client.timetable
+				uid = update.message.from_user.id
+				checksub = db.timetable.find({"telegram_id":uid})
+				if not checksub:
+					message = "We can't unsubscribe from what doesn't exist!\n Are you registered in our database?"
+				else:
+					db.timetable.update({"telegram_id":uid},{"$set":{"alert":"false"}})
+					message = "Sucessfully unsubscribed. To resubscribe, use /alert"
+				update.message.reply_text(message,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+
+	def subscribereminder(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				db = client.timetable
+				uid = update.message.from_user.id
+				checksub = db.timetable.find({"telegram_id":uid})
+				if not checksub:
+					message = "We can't subscribe to what doesn't exist!\n Are you in our database?"
+				else:
+					db.timetable.update({"telegram_id":uid},{"$set":{"alert":"true"}})
+					message = "Sucessfully subscribed. To unsubscribe, use /unsub"
+				update.message.reply_text(message,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+
+	def reminder(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				db = client.timetable
+				timetablelist = db.timetable.find()
+				for each in timetablelist:
+					if each['alert'] == "true":
+						message = "Good Morning, "
+						message += each['name']
+						message += "\n"
+						message += "These are your classes for today, "
+						message += datetime.strftime(datetime.now(),'%b %d %Y')
+						message += "\n"
+						classeslist = []
+						today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
+						for classes in today_class['class_name']:
+							if (classes['date'].date()) == datetime.now().date():
+								classeslist.append({"name":classes['name'],
+													"type":classes['type'],
+													"location":classes['location'],
+													"start_time":classes['start_time'],
+													"end_time":classes['end_time']
+													})
+						if not classeslist:
+							message += "-"
+						else:
+							classeslist = sorted(classeslist, key=lambda item:item['start_time'])
+							for retrieved_classes in classeslist:
+								message += "\n📅 "
+								message += datetime.today().strftime("%A")
+								message += "\n"
+								message += retrieved_classes['name']
+								message += "\nDate: <b>"
+								message += datetime.strftime(datetime.now().date(),'%b %d %Y')
+								message += "</b>\n"
+								message += "Type: "
+								message += retrieved_classes['type']
+								message += "\n"
+								message += "Start Time: "
+								message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
+								message += "\n"
+								message += "End Time :"
+								message += datetime.strftime(retrieved_classes['end_time'],'%H:%M')
+								message += "\n\n"
+								message += "To unsubscribe from this daily reminder, use /unsub\n"
+								
+						
+						bot.sendMessage(chat_id=each['telegram_id'], text=str(message),parse_mode='HTML')
+
+
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+

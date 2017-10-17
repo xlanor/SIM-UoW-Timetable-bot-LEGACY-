@@ -12,6 +12,13 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 ## [Unreleased]
 
 ## [Released]
+### [1.2.0] - 2017-10-17
+### Added
+- Added alerting system to remind users at 0730H each morning
+
+### Changed
+- Fixed some minor bugs.
+
 ### [1.1.0] - 2017-10-11
 ### Added
 - Added scrolling feature to timetable **beta**

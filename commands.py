@@ -586,6 +586,8 @@ class Commands():
 						message += "These are your classes for today, "
 						message += datetime.strftime(datetime.now(),'%b %d %Y')
 						message += "\n"
+						message += "\n📅 "
+						message += datetime.today().strftime("%A")
 						classeslist = []
 						today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
 						for classes in today_class['class_name']:
@@ -601,8 +603,6 @@ class Commands():
 						else:
 							classeslist = sorted(classeslist, key=lambda item:item['start_time'])
 							for retrieved_classes in classeslist:
-								message += "\n📅 "
-								message += datetime.today().strftime("%A")
 								message += "\n"
 								message += retrieved_classes['name']
 								message += "\nDate: <b>"
@@ -610,8 +610,9 @@ class Commands():
 								message += "</b>\n"
 								message += "Type: "
 								message += retrieved_classes['type']
-								message += "\n"
-								message += "Start Time: "
+								message += "\nLocation: "
+								message += retrieved_classes['location']
+								message += "\nStart Time: "
 								message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
 								message += "\n"
 								message += "End Time :"

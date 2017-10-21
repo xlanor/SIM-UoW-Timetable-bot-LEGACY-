@@ -12,6 +12,13 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 ## [Unreleased]
 
 ## [Released]
+### [1.3.0] - 2017-10-20
+### Added
+- Nightly alerting system at 2130 for the next day's schedule
+
+### Changed
+- Fixed daytime alert formatting.
+
 ### [1.2.0] - 2017-10-17
 ### Added
 - Added alerting system to remind users at 0730H each morning

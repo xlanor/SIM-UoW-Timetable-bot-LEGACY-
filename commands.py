@@ -557,6 +557,27 @@ class Commands():
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
 
+	def togglenightly(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				db = client.timetable
+				uid = update.message.from_user.id
+				checksub = db.timetable.find_one({"telegram_id":uid})
+				if not checksub:
+					message = "We can't unsubscribe from what doesn't exist!\n Are you registered in our database?"
+				else:
+					if checksub['nightly_alert'] == "true":
+						db.timetable.update({"telegram_id":uid},{"$set":{"nightly_alert":"false"}})
+						message = "Sucessfully unsubscribed from nightly updates. To resubscribe, use /nightly"
+					else:
+						db.timetable.update({"telegram_id":uid},{"$set":{"nightly_alert":"true"}})
+						message = "Sucessfully subscribed to nightly updates. To unsubscribe, use /nightly"
+
+				update.message.reply_text(message,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+
 	def subscribereminder(bot,update):
 		try:
 			with MongoClient(Tokens.mongo('live')) as client:
@@ -599,7 +620,9 @@ class Commands():
 													"end_time":classes['end_time']
 													})
 						if not classeslist:
-							message += "-"
+							message += "\n-"
+							message += "\n\n"
+							message += "To unsubscribe from this daily reminder, use /unsub\n"
 						else:
 							classeslist = sorted(classeslist, key=lambda item:item['start_time'])
 							for retrieved_classes in classeslist:
@@ -617,10 +640,10 @@ class Commands():
 								message += "\n"
 								message += "End Time :"
 								message += datetime.strftime(retrieved_classes['end_time'],'%H:%M')
-								message += "\n\n"
-								message += "To unsubscribe from this daily reminder, use /unsub\n"
 								
 						
+							message += "\n\n"
+							message += "To unsubscribe from this daily reminder, use /unsub\n"
 						bot.sendMessage(chat_id=each['telegram_id'], text=str(message),parse_mode='HTML')
 
 
@@ -628,3 +651,75 @@ class Commands():
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
 
+	def nightlyreminder(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				db = client.timetable
+				timetablelist = db.timetable.find()
+				earlymessage = "You have an early class tomorrow, <b>please sleep early tonight!</b>"
+				earlytimestart = datetime.strptime("08:00","%H:%M")
+				earlytimeend = datetime.strptime("11:00","%H:%M")
+				for each in timetablelist:
+					if each['nightly_alert'] == "true":
+						earlytrigger = 0
+						message = "Good Morning, "
+						message += each['name']
+						message += "\n"
+						message += "These are your classes for tomorrow, "
+						message += datetime.strftime((datetime.now())+timedelta(1),'%b %d %Y')
+						message += "\n"
+						message += "\n📅 "
+						message += ((datetime.today())+timedelta(1)).strftime("%A")
+						classeslist = []
+						today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
+						for classes in today_class['class_name']:
+							if (classes['date'].date()) == ((datetime.now())+timedelta(1)).date():
+								classeslist.append({"name":classes['name'],
+													"type":classes['type'],
+													"location":classes['location'],
+													"start_time":classes['start_time'],
+													"end_time":classes['end_time']
+													})
+						if not classeslist:
+							message += "\n-"
+							message += "\n\n"
+							message += "To unsubscribe from this daily reminder, use /unsub\n"
+						else:
+							classeslist = sorted(classeslist, key=lambda item:item['start_time'])
+							for retrieved_classes in classeslist:
+								message += "\n"
+								message += retrieved_classes['name']
+								message += "\nDate: <b>"
+								message += datetime.strftime(((datetime.now())+timedelta(1)).date(),'%b %d %Y')
+								message += "</b>\n"
+								message += "Type: "
+								message += retrieved_classes['type']
+								message += "\nLocation: "
+								message += retrieved_classes['location']
+								message += "\nStart Time: "
+								message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
+								if (earlystarttime.time() <= retrieved_classes['start_time'].time() <= earlytimeend.time()):
+									earlytrigger += 1
+
+								message += "\n"
+								message += "End Time :"
+								message += datetime.strftime(retrieved_classes['end_time'],'%H:%M')
+
+								if earlytrigger > 0:
+									message += "\n"
+									message += earlymessage
+								
+						
+							message += "\n\n"
+							message += "To unsubscribe from this nightly reminder, use /nightly\n"
+						bot.sendMessage(chat_id=each['telegram_id'], text=str(message),parse_mode='HTML')
+						
+
+
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+
+
+if __name__ == "__main__":
+	Commands.nightlyreminder()

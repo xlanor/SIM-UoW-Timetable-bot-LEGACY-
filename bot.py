@@ -28,6 +28,8 @@ def Cronus():
 	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('alert', Commands.subscribereminder)
 	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('nightly', Commands.togglenightly)
+	dispatcher.add_handler(start_handler)
 	conv_handler = ConversationHandler(
 		entry_points=[CommandHandler('register', Commands.register)],
 
@@ -64,7 +66,9 @@ def Cronus():
 	)
 	dispatcher.add_handler(conv_handler,3)
 	alert_time = datetime.strptime('07:30','%H:%M').time()
+	nightly_alert_time = datetime.strptime('22:00','%H:%M').time()
 	job_minute = j.run_repeating(Commands.reminder,timedelta(hours=24),alert_time)
+	job_nightly = j.run_repeating(Commands.nightlyreminder,timedelta(hours=24),nightly_alert_time)
 	updater.dispatcher.add_handler(CallbackQueryHandler(Commands.callback))
 	updater.start_polling()
 	updater.idle()

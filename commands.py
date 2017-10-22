@@ -662,14 +662,15 @@ class Commands():
 				for each in timetablelist:
 					if each['nightly_alert'] == "true":
 						earlytrigger = 0
-						message = "Good Morning, "
+						message = "Good evening, "
 						message += each['name']
 						message += "\n"
-						message += "These are your classes for tomorrow, "
+						message += "These are your classes for <b>tomorrow</b>, "
 						message += datetime.strftime((datetime.now())+timedelta(1),'%b %d %Y')
 						message += "\n"
-						message += "\n📅 "
+						message += "\n📅 <b>"
 						message += ((datetime.today())+timedelta(1)).strftime("%A")
+						message += "</b>"
 						classeslist = []
 						today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
 						for classes in today_class['class_name']:

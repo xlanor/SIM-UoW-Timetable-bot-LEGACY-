@@ -47,7 +47,7 @@ If you wish to host a current instance of the bot for personal usage, you **must
 
 If you wish to host a current instance of the bot but are not willing to modify the source code, you must run the current version of the source code at all times, and explicitly link to this source code.
 
-The stipulated conditions above are due to the sensetive nature of the data that the bot is handling. Users of any instance must at all times be aware of the sensetive nature of the data and the measures that are being taken to protect against said data falling into the hands of any unknown persons. 
+The stipulated conditions above are due to the sensitive nature of the data that the bot is handling. Users of any instance must at all times be aware of the sensitive nature of the data and the measures that are being taken to protect against said data falling into the hands of any unknown persons. 
 
 ## Usage
 

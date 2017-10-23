@@ -41,6 +41,11 @@ Cronus is licensed under the [GNU Affero General Public License v3](LICENSE).
 
 All derivatives works not intended for personal use must be released into the public domain for the sake of transparency
 
+Derivatives works which are intended for personal use, but if hosted on a live server, may be used by others, even against the intentions of the owner of that particular instance, are not considered as "intended for personal use" and **must** be released into the public domain
+
+If you wish to host a current instance of the bot for personal usage, you **must** modify the source code to prevent usage by any persons other than yourself.
+
+If you wish to host a current instance of the bot but are not willing to modify the source code, you must run the current version of the source code at all times, and explicitly link to this source code.
 
 ## Usage
 

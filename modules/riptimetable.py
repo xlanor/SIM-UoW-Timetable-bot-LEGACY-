@@ -62,6 +62,13 @@ class SIMConnect():
 					if gettype.text.strip():
 						type_class = gettype.text
 						type_id = int((((gettype.get('id')).split("$"))[1]).strip())
+						'''#########################################################
+									Only the first row for each type has
+										the value of the type.
+								ie: row 0, first lecture type will contain 
+							lecture., then its blank until row 15, row 15 contains 
+							tutorial. We put it into a dict to compare later.
+						'''#########################################################
 						class_type_dict[type_id] = type_class
 					getdate = row.find("span",{'id':re.compile(r'(MTG_DATES\$)([0-9]{1})')})
 					if not getdate.text.strip():
@@ -92,6 +99,7 @@ class SIMConnect():
 
 					location = getlocation.text
 
+					# Time to determine class type (lecture, tutorial) from the array above.
 					rowid = (((getlocation.get('id')).split("$"))[1]).strip()
 					list_of_class_type_keys = list(class_type_dict.keys())
 					list_of_class_type_keys = sorted(list_of_class_type_keys)

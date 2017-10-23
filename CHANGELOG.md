@@ -12,6 +12,13 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 ## [Unreleased]
 
 ## [Released]
+### [1.3.2] - 2017-10-23
+### Added
+-
+
+### Changed
+- Fixed wrong variable name being used
+
 ### [1.3.1] - 2017-10-21
 ### Added
 -

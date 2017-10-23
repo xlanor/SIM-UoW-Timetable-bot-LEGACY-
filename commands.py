@@ -699,7 +699,7 @@ class Commands():
 								message += retrieved_classes['location']
 								message += "\nStart Time: "
 								message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
-								if (earlystarttime.time() <= retrieved_classes['start_time'].time() <= earlytimeend.time()):
+								if (earlytimestart.time() <= retrieved_classes['start_time'].time() <= earlytimeend.time()):
 									earlytrigger += 1
 
 								message += "\n"

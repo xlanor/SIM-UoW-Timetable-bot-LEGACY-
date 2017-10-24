@@ -566,12 +566,17 @@ class Commands():
 				if not checksub:
 					message = "We can't unsubscribe from what doesn't exist!\n Are you registered in our database?"
 				else:
-					if checksub['nightly_alert'] == "true":
-						db.timetable.update({"telegram_id":uid},{"$set":{"nightly_alert":"false"}})
-						message = "Sucessfully unsubscribed from nightly updates. To resubscribe, use /nightly"
+					if 'nightly_alert' in checksub:
+						if checksub['nightly_alert'] == "true":
+							db.timetable.update({"telegram_id":uid},{"$set":{"nightly_alert":"false"}})
+							message = "Sucessfully unsubscribed from nightly updates. To resubscribe, use /nightly"
+						else:
+							db.timetable.update({"telegram_id":uid},{"$set":{"nightly_alert":"true"}})
+							message = "Sucessfully subscribed to nightly updates. To unsubscribe, use /nightly"
 					else:
 						db.timetable.update({"telegram_id":uid},{"$set":{"nightly_alert":"true"}})
 						message = "Sucessfully subscribed to nightly updates. To unsubscribe, use /nightly"
+
 
 				update.message.reply_text(message,parse_mode='HTML')
 		except:

@@ -12,6 +12,13 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 ## [Unreleased]
 
 ## [Released]
+### [1.3.3] - 2017-10-24
+### Added
+-
+
+### Changed
+- Fixed a bug with new users and nightly alerts
+
 ### [1.3.2] - 2017-10-23
 ### Added
 -

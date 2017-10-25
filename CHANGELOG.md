@@ -12,24 +12,19 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 ## [Unreleased]
 
 ## [Released]
-### [1.3.3] - 2017-10-24
-### Added
--
+### [1.3.4] - 2017-10-25
+### Changed
+- Added a check to prevent the bot from throwing an exception when users who cancelled halfway through the timetable are scanned during the alerts
 
+### [1.3.3] - 2017-10-24
 ### Changed
 - Fixed a bug with new users and nightly alerts
 
 ### [1.3.2] - 2017-10-23
-### Added
--
-
 ### Changed
 - Fixed wrong variable name being used
 
 ### [1.3.1] - 2017-10-21
-### Added
--
-
 ### Changed
 - Tweaked formatting
 

@@ -605,51 +605,52 @@ class Commands():
 				db = client.timetable
 				timetablelist = db.timetable.find()
 				for each in timetablelist:
-					if each['alert'] == "true":
-						message = "Good Morning, "
-						message += each['name']
-						message += "\n"
-						message += "These are your classes for today, "
-						message += datetime.strftime(datetime.now(),'%b %d %Y')
-						message += "\n"
-						message += "\n📅 "
-						message += datetime.today().strftime("%A")
-						classeslist = []
-						today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
-						for classes in today_class['class_name']:
-							if (classes['date'].date()) == datetime.now().date():
-								classeslist.append({"name":classes['name'],
-													"type":classes['type'],
-													"location":classes['location'],
-													"start_time":classes['start_time'],
-													"end_time":classes['end_time']
-													})
-						if not classeslist:
-							message += "\n-"
-							message += "\n\n"
-							message += "To unsubscribe from this daily reminder, use /unsub\n"
-						else:
-							classeslist = sorted(classeslist, key=lambda item:item['start_time'])
-							for retrieved_classes in classeslist:
-								message += "\n"
-								message += retrieved_classes['name']
-								message += "\nDate: <b>"
-								message += datetime.strftime(datetime.now().date(),'%b %d %Y')
-								message += "</b>\n"
-								message += "Type: "
-								message += retrieved_classes['type']
-								message += "\nLocation: "
-								message += retrieved_classes['location']
-								message += "\nStart Time: "
-								message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
-								message += "\n"
-								message += "End Time :"
-								message += datetime.strftime(retrieved_classes['end_time'],'%H:%M')
-								
-						
-							message += "\n\n"
-							message += "To unsubscribe from this daily reminder, use /unsub\n"
-						bot.sendMessage(chat_id=each['telegram_id'], text=str(message),parse_mode='HTML')
+					if 'alert' in each:
+						if each['alert'] == "true":
+							message = "Good Morning, "
+							message += each['name']
+							message += "\n"
+							message += "These are your classes for today, "
+							message += datetime.strftime(datetime.now(),'%b %d %Y')
+							message += "\n"
+							message += "\n📅 "
+							message += datetime.today().strftime("%A")
+							classeslist = []
+							today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
+							for classes in today_class['class_name']:
+								if (classes['date'].date()) == datetime.now().date():
+									classeslist.append({"name":classes['name'],
+														"type":classes['type'],
+														"location":classes['location'],
+														"start_time":classes['start_time'],
+														"end_time":classes['end_time']
+														})
+							if not classeslist:
+								message += "\n-"
+								message += "\n\n"
+								message += "To unsubscribe from this daily reminder, use /unsub\n"
+							else:
+								classeslist = sorted(classeslist, key=lambda item:item['start_time'])
+								for retrieved_classes in classeslist:
+									message += "\n"
+									message += retrieved_classes['name']
+									message += "\nDate: <b>"
+									message += datetime.strftime(datetime.now().date(),'%b %d %Y')
+									message += "</b>\n"
+									message += "Type: "
+									message += retrieved_classes['type']
+									message += "\nLocation: "
+									message += retrieved_classes['location']
+									message += "\nStart Time: "
+									message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
+									message += "\n"
+									message += "End Time :"
+									message += datetime.strftime(retrieved_classes['end_time'],'%H:%M')
+									
+							
+								message += "\n\n"
+								message += "To unsubscribe from this daily reminder, use /unsub\n"
+							bot.sendMessage(chat_id=each['telegram_id'], text=str(message),parse_mode='HTML')
 
 
 		except:
@@ -665,60 +666,61 @@ class Commands():
 				earlytimestart = datetime.strptime("08:00","%H:%M")
 				earlytimeend = datetime.strptime("11:00","%H:%M")
 				for each in timetablelist:
-					if each['nightly_alert'] == "true":
-						earlytrigger = 0
-						message = "Good evening, "
-						message += each['name']
-						message += "\n"
-						message += "These are your classes for <b>tomorrow</b>, "
-						message += datetime.strftime((datetime.now())+timedelta(1),'%b %d %Y')
-						message += "\n"
-						message += "\n📅 <b>"
-						message += ((datetime.today())+timedelta(1)).strftime("%A")
-						message += "</b>"
-						classeslist = []
-						today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
-						for classes in today_class['class_name']:
-							if (classes['date'].date()) == ((datetime.now())+timedelta(1)).date():
-								classeslist.append({"name":classes['name'],
-													"type":classes['type'],
-													"location":classes['location'],
-													"start_time":classes['start_time'],
-													"end_time":classes['end_time']
-													})
-						if not classeslist:
-							message += "\n-"
-							message += "\n\n"
-							message += "To unsubscribe from this daily reminder, use /unsub\n"
-						else:
-							classeslist = sorted(classeslist, key=lambda item:item['start_time'])
-							for retrieved_classes in classeslist:
-								message += "\n"
-								message += retrieved_classes['name']
-								message += "\nDate: <b>"
-								message += datetime.strftime(((datetime.now())+timedelta(1)).date(),'%b %d %Y')
-								message += "</b>\n"
-								message += "Type: "
-								message += retrieved_classes['type']
-								message += "\nLocation: "
-								message += retrieved_classes['location']
-								message += "\nStart Time: "
-								message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
-								if (earlytimestart.time() <= retrieved_classes['start_time'].time() <= earlytimeend.time()):
-									earlytrigger += 1
-
-								message += "\n"
-								message += "End Time :"
-								message += datetime.strftime(retrieved_classes['end_time'],'%H:%M')
-
-								if earlytrigger > 0:
+					if 'nightly_alert' in each:
+						if each['nightly_alert'] == "true":
+							earlytrigger = 0
+							message = "Good evening, "
+							message += each['name']
+							message += "\n"
+							message += "These are your classes for <b>tomorrow</b>, "
+							message += datetime.strftime((datetime.now())+timedelta(1),'%b %d %Y')
+							message += "\n"
+							message += "\n📅 <b>"
+							message += ((datetime.today())+timedelta(1)).strftime("%A")
+							message += "</b>"
+							classeslist = []
+							today_class = db.timetable.find_one({"telegram_id":each['telegram_id']},{'class_name':1,'_id':0})
+							for classes in today_class['class_name']:
+								if (classes['date'].date()) == ((datetime.now())+timedelta(1)).date():
+									classeslist.append({"name":classes['name'],
+														"type":classes['type'],
+														"location":classes['location'],
+														"start_time":classes['start_time'],
+														"end_time":classes['end_time']
+														})
+							if not classeslist:
+								message += "\n-"
+								message += "\n\n"
+								message += "To unsubscribe from this daily reminder, use /unsub\n"
+							else:
+								classeslist = sorted(classeslist, key=lambda item:item['start_time'])
+								for retrieved_classes in classeslist:
 									message += "\n"
-									message += earlymessage
-								
-						
-							message += "\n\n"
-							message += "To unsubscribe from this nightly reminder, use /nightly\n"
-						bot.sendMessage(chat_id=each['telegram_id'], text=str(message),parse_mode='HTML')
+									message += retrieved_classes['name']
+									message += "\nDate: <b>"
+									message += datetime.strftime(((datetime.now())+timedelta(1)).date(),'%b %d %Y')
+									message += "</b>\n"
+									message += "Type: "
+									message += retrieved_classes['type']
+									message += "\nLocation: "
+									message += retrieved_classes['location']
+									message += "\nStart Time: "
+									message += datetime.strftime(retrieved_classes['start_time'],'%H:%M')
+									if (earlytimestart.time() <= retrieved_classes['start_time'].time() <= earlytimeend.time()):
+										earlytrigger += 1
+
+									message += "\n"
+									message += "End Time :"
+									message += datetime.strftime(retrieved_classes['end_time'],'%H:%M')
+
+									if earlytrigger > 0:
+										message += "\n"
+										message += earlymessage
+									
+							
+								message += "\n\n"
+								message += "To unsubscribe from this nightly reminder, use /nightly\n"
+							bot.sendMessage(chat_id=each['telegram_id'], text=str(message),parse_mode='HTML')
 						
 
 

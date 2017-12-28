@@ -11,6 +11,7 @@ from pymongo import MongoClient
 from tokens import Tokens
 from telegram import ReplyKeyboardMarkup,ChatAction,InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,Job,ConversationHandler
+from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError
 from modules.testlogin import loginTest
 from modules.encryption import Encrypt
 from modules.riptimetable import SIMConnect
@@ -29,8 +30,11 @@ class Commands():
 					document = db.timetable.distinct("telegram_id",{"telegram_id":{"$exists":"true"}})
 					for each in document:
 						user_id = int(each)
-						bot.sendMessage(chat_id=user_id, text=message,parse_mode='HTML')
-						clock.sleep(0.5)
+						try:
+							bot.sendMessage(chat_id=user_id, text=message,parse_mode='HTML')
+							clock.sleep(0.5)
+						except Unauthorized:
+							pass #ignores users
 				else:
 					errormessage = "Hey, you don't look like my creator!"
 					update.message.reply_text(errormessage,parse_mode='HTML')

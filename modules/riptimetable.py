@@ -15,7 +15,7 @@ class SIMConnect():
 	def timetable(self,username,password):
 		url = 'https://simconnect.simge.edu.sg/psp/paprd/EMPLOYEE/HRMS/s/WEBLIB_EOPPB.ISCRIPT1.FieldFormula.Iscript_SM_Redirect?cmd=login'
 		#"API" that populates timetable. It was never designed for this purpose, but we're going to use it
-		url3= 'https://simconnect1.simge.edu.sg:444/psc/csprd_2/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_LIST.GBL' 
+		url3 = 'https://simconnect1.simge.edu.sg:444/psc/csprd_2/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_LIST.GBL'
 		#initialize PhantomJS, define settings
 		driver = webdriver.PhantomJS(executable_path='./phantomjs',service_args=['--ignore-ssl-errors=true', '--ssl-protocol=TLSv1'])
 		driver.set_window_size(1124, 850)  
@@ -35,10 +35,21 @@ class SIMConnect():
 			driver.get(url3) 
 			formatted_result = driver.page_source
 			soup = BeautifulSoup(formatted_result,"html.parser")
+			termdiv = soup.findAll('span',{'id':re.compile(r'(TERM_CAR\$)([0-9]{1})')})
+			if len(termdiv) != 0:
+				latest_term = len(termdiv)-1
+				newid = 'SSR_DUMMY_RECV1$sels$'+str(latest_term)+'$$0'
+				term_button = driver.find_element_by_id(newid)
+				term_button.click()
+				continue_button = driver.find_element_by_id('DERIVED_SSS_SCT_SSR_PB_GO')
+				continue_button.click()
+				clock.sleep(5)#loading the new timetablepage...
+				new_formatted_result = driver.page_source
+				soup = BeautifulSoup(new_formatted_result,"html.parser")
+			
 			subjectdiv = soup.findAll('div',{'id':re.compile(r'(win2divDERIVED_REGFRM1_DESCR20\$)([0-9]{1})')})
 			class_type_dict = {}
 			list_of_results = []
-
 			for div in subjectdiv:
 				class_type_dict.clear()
 				subjectitle = div.find("td",{'class':'PAGROUPDIVIDER'})

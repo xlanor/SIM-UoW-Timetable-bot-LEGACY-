@@ -12,6 +12,21 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 ## [Unreleased]
 
 ## [Released]
+###[1.3.5] - 2018-02-01
+### Changed
+- Fixed exception when faced with multiple term timetables
+- Some users have multi-term timetables, alternating between term 1 and term 2.
+- Not really sure why this is done but it has to be addressed given that there's no proper API to rip the TT
+- Modified selenium to do a couple of clicks if detected.
+- The bot will always select the latest timetable to display if given a choice.
+- Commited in #9ce5126
+- Fixed issue with inline buttons
+- Timetables may have a gap in between with 1(or more) weeks where there are no classes.
+- Previous behaviour by the bot was to check if there are classes next week, if there are no classes, it will not give an option to navigate further
+- Rewrote behaviour to search if there are classes in the doccument that have a date value gt/lt than current date.
+- If there are classes, it will display the button, allowing users to navigate through the date with no classes.
+- Commited in #87276d0
+
 ### [1.3.4] - 2017-10-25
 ### Changed
 - Added a check to prevent the bot from throwing an exception when users who cancelled halfway through the timetable are scanned during the alerts

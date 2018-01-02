@@ -286,12 +286,73 @@ class Commands():
 													"end_time":each['end_time'],
 													"location":each['location'],
 													"date":each['date']})
-						if previous_start_date <= each['date'] <= previous_end_date:
-							previous_date_trigger = 'pr'+ datetime.strftime(previous_start_date,'%b%d%Y')
+					get_previous_date = db.timetable.aggregate([
+							{
+								"$unwind": "$class_name"
+							},
+							{
+								"$match":
+								{
+									"$and":[
+									{
+										"telegram_id":uid
+									 },
+									  {
+										"class_name.date":
+										{
+											"$lt": current_date
+										}
+									 }
+									 
+									]
+								 }
+							 },
+							  { "$group": { "_id": "null", "count": { "$sum": 1 } } }
+						 ], useCursor=False)
+					get_later_date = db.timetable.aggregate([
+							{
+								"$unwind": "$class_name"
+							},
+							{
+								"$match":
+								{
+									"$and":[
+									{
+										"telegram_id":uid
+									 },
+									  {
+										"class_name.date":
+										{
+											"$gt": current_date
+										}
+									 }
+									 
+									]
+								 }
+							 },
+							  { "$group": { "_id": "null", "count": { "$sum": 1 } } }
+						 ], useCursor=False)
+						#if previous_start_date <= each['date'] <= previous_end_date:
+					get_previous_date = list(get_previous_date)	
+					get_later_date = list(get_later_date)
+					if get_previous_date:
 
-						if next_start_date <= each['date'] <= next_end_date:
-							next_date_trigger = 'nx'+datetime.strftime(next_start_date,'%b%d%Y')
+						previous_date_trigger = 'pr'+ datetime.strftime(previous_start_date,'%b%d%Y')
 
+					#if next_start_date <= each['date'] <= next_end_date:
+					if get_later_date:
+						next_date_trigger = 'nx'+datetime.strftime(next_start_date,'%b%d%Y')
+
+					keyboard = []
+					if previous_date_trigger != "":
+						if next_date_trigger != "":
+							keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
+						else:
+							keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
+					else:
+						if next_date_trigger != "":
+							keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+								
 					if this_week_classes:
 						this_week_classes = sorted(this_week_classes, key=lambda item:item['start_time'])
 						message = "📈 Timetable for the week of <b>"
@@ -332,15 +393,7 @@ class Commands():
 							else:
 								message += dashmessage
 							counter += 1
-						keyboard = []
-						if previous_date_trigger != "":
-							if next_date_trigger != "":
-								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
-							else:
-								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
-						else:
-							if next_date_trigger != "":
-								keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+						
 
 						reply_markup = InlineKeyboardMarkup(keyboard)
 						bot.sendMessage(chat_id=update.message.chat_id,reply_markup=reply_markup,text=message,parse_mode='HTML')
@@ -423,6 +476,7 @@ class Commands():
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
 			return ConversationHandler.END
+
 	def callback(bot,update):
 		try:
 			with MongoClient(Tokens.mongo('live')) as client:
@@ -452,14 +506,81 @@ class Commands():
 														"end_time":each['end_time'],
 														"location":each['location'],
 														"date":each['date']})
-							elif previous_start_date <= each['date'] <= previous_end_date:
+							"""elif previous_start_date <= each['date'] <= previous_end_date:
 								previous_date_trigger = 'pr'+ datetime.strftime(previous_start_date,'%b%d%Y')
 
 							elif next_start_date <= each['date'] <= next_end_date:
-								next_date_trigger = 'nx'+datetime.strftime(next_start_date,'%b%d%Y')
+								next_date_trigger = 'nx'+datetime.strftime(next_start_date,'%b%d%Y')"""
 						except:					
 							catcherror = traceback.format_exc()
 							bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+					get_previous_date = db.timetable.aggregate([
+							{
+								"$unwind": "$class_name"
+							},
+							{
+								"$match":
+								{
+									"$and":[
+									{
+										"telegram_id":uid
+									 },
+									  {
+										"class_name.date":
+										{
+											"$lt": current_date
+										}
+									 }
+									 
+									]
+								 }
+							 },
+							  { "$group": { "_id": "null", "count": { "$sum": 1 } } }
+						 ], useCursor=False)
+					get_later_date = db.timetable.aggregate([
+							{
+								"$unwind": "$class_name"
+							},
+							{
+								"$match":
+								{
+									"$and":[
+									{
+										"telegram_id":uid
+									 },
+									  {
+										"class_name.date":
+										{
+											"$gt": current_date
+										}
+									 }
+									 
+									]
+								 }
+							 },
+							  { "$group": { "_id": "null", "count": { "$sum": 1 } } }
+						 ], useCursor=False)
+						#if previous_start_date <= each['date'] <= previous_end_date:
+					get_previous_date = list(get_previous_date)	
+					get_later_date = list(get_later_date)
+					if get_previous_date:
+
+						previous_date_trigger = 'pr'+ datetime.strftime(previous_start_date,'%b%d%Y')
+
+					#if next_start_date <= each['date'] <= next_end_date:
+					if get_later_date:
+						next_date_trigger = 'nx'+datetime.strftime(next_start_date,'%b%d%Y')
+			
+					keyboard = []
+					if previous_date_trigger != "":
+						if next_date_trigger != "":
+							keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
+						else:
+							keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
+					else:
+						if next_date_trigger != "":
+							keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+								
 					if this_week_classes:
 						this_week_classes = sorted(this_week_classes, key=lambda item:item['start_time'])
 						message = "📈 Timetable for the week of <b>"
@@ -500,16 +621,7 @@ class Commands():
 							else:
 								message += dashmessage
 							counter += 1
-						keyboard = []
-						if previous_date_trigger != "":
-							if next_date_trigger != "":
-								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
-							else:
-								keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
-						else:
-							if next_date_trigger != "":
-								keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
-
+					
 						reply_markup = InlineKeyboardMarkup(keyboard)
 						bot.edit_message_text(text=message,chat_id=update.callback_query.message.chat_id,message_id=update.callback_query.message.message_id,reply_markup=reply_markup,parse_mode='HTML')
 					else:
@@ -521,18 +633,10 @@ class Commands():
 							message += datetime.strftime(document['last_synced_date'], '%b %d %Y %H:%M')
 							message += "H</b>\n"
 							message += "By using this bot, you agree to the terms and conditions stated in the DISCLAIMER.md on github\n\n"
-							keyboard = []
-							if previous_date_trigger != "":
-								if next_date_trigger != "":
-									keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger),InlineKeyboardButton("Next Week",callback_data=next_date_trigger)])
-								else:
-									keyboard.append([InlineKeyboardButton("Previous Week", callback_data=previous_date_trigger)])
-							else:
-								if next_date_trigger != "":
-									keyboard.append([InlineKeyboardButton("Next Week", callback_data=next_date_trigger)])
+						
 							message += "You have no classes this week!"
 							reply_markup = InlineKeyboardMarkup(keyboard)
-							bot.sendMessage(chat_id=update.message.chat_id,reply_markup=reply_markup,text=message,parse_mode='HTML')
+							bot.edit_message_text(text=message,chat_id=update.callback_query.message.chat_id,message_id=update.callback_query.message.message_id,reply_markup=reply_markup,parse_mode='HTML')
 						else:
 							message = "No timetable could be retrieved."
 							update.message.reply_text(message,parse_mode='HTML')

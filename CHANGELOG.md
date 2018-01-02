@@ -12,20 +12,20 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 ## [Unreleased]
 
 ## [Released]
-###[1.3.5] - 2018-02-01
+### [1.3.5] - 2018-02-02
 ### Changed
 - Fixed exception when faced with multiple term timetables
 - Some users have multi-term timetables, alternating between term 1 and term 2.
 - Not really sure why this is done but it has to be addressed given that there's no proper API to rip the TT
 - Modified selenium to do a couple of clicks if detected.
 - The bot will always select the latest timetable to display if given a choice.
-- Commited in #9ce5126
+- Commited in [#9ce5126](https://github.com/xlanor/SIM-UoW-Timetable-bot/commit/9ce51262927ad6999e1e049585605e23d8eb4541)
 - Fixed issue with inline buttons
 - Timetables may have a gap in between with 1(or more) weeks where there are no classes.
 - Previous behaviour by the bot was to check if there are classes next week, if there are no classes, it will not give an option to navigate further
 - Rewrote behaviour to search if there are classes in the doccument that have a date value gt/lt than current date.
 - If there are classes, it will display the button, allowing users to navigate through the date with no classes.
-- Commited in #87276d0
+- Commited in [#87276d0](https://github.com/xlanor/SIM-UoW-Timetable-bot/commit/87276d02cfa14c734f3677b05a1553177a246b55)
 
 ### [1.3.4] - 2017-10-25
 ### Changed

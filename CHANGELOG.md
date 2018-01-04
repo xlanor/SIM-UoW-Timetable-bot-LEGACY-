@@ -10,6 +10,10 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 - X will be bumped if the code released is no longer backwards compatible with previous versions.
 
 ## [Unreleased]
+### [1.3.6] - 2018-02-04
+### Changed
+- Refactored code in ripping module.
+- Hopefully its easier to understand.
 
 ## [Released]
 ### [1.3.5] - 2018-02-02

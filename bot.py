@@ -9,7 +9,7 @@ import telegram
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,Job, MessageHandler, Filters, RegexHandler, ConversationHandler
 from tokens import Tokens
 from commands import Commands
-from commands import NAME,USERNAME,PASSWORD,KEY,ENTERKEY,DECRYPT,DELETEUSER
+from commands import NAME,USERNAME,PASSWORD,KEY,ENTERKEY,DECRYPT,DELETEUSER,DECRYPTTIMETABLE
 from datetime import datetime,timedelta
 
 
@@ -38,6 +38,16 @@ def Cronus():
 			USERNAME: [MessageHandler(Filters.text,Commands.username,pass_user_data=True)],
 			PASSWORD: [MessageHandler(Filters.text,Commands.password,pass_user_data=True)],
 			KEY: [MessageHandler(Filters.text,Commands.keys,pass_user_data=True)]
+		},
+
+		fallbacks=[CommandHandler('cancel', Commands.cancel)],
+		per_user = 'true'
+	)
+	conv_handler = ConversationHandler(
+		entry_points=[CommandHandler('attendance', Commands.enterkeyattendance)],
+
+		states={
+			DECRYPTTIMETABLE: [MessageHandler(Filters.text,Commands.decrypt_timetable)]
 		},
 
 		fallbacks=[CommandHandler('cancel', Commands.cancel)],

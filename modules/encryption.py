@@ -27,3 +27,4 @@ class Encrypt():
 			cipher = AES.new(key, AES.MODE_CBC, iv )
 			decrypted = unpad(cipher.decrypt( enc[16:] )).decode("utf-8")
 			return decrypted
+

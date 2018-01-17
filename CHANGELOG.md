@@ -10,13 +10,17 @@ Under [Semantic Versioning](http://semver.org/spec/v2.0.0.html), vX.Y.Z ,
 - X will be bumped if the code released is no longer backwards compatible with previous versions.
 
 ## [Unreleased]
-### [1.3.6] - 2018-02-04
+### [1.4.0] - 2018-01-17
+### Added
+- Added attendance module [BETA]
+
+### [1.3.6] - 2018-01-04
 ### Changed
 - Refactored code in ripping module.
 - Hopefully its easier to understand.
 
 ## [Released]
-### [1.3.5] - 2018-02-02
+### [1.3.5] - 2018-01-02
 ### Changed
 - Fixed exception when faced with multiple term timetables
 - Some users have multi-term timetables, alternating between term 1 and term 2.

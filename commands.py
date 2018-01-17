@@ -15,8 +15,9 @@ from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, Ch
 from modules.testlogin import loginTest
 from modules.encryption import Encrypt
 from modules.riptimetable import SIMConnect
+from modules.checkattendance import checkAttendance
 
-NAME,USERNAME,PASSWORD,KEY,ENTERKEY,DECRYPT,DELETEUSER = range(7) #declares states for hermes. Imported in main folder
+NAME,USERNAME,PASSWORD,KEY,ENTERKEY,DECRYPT,DELETEUSER,DECRYPTTIMETABLE = range(8) #declares states for hermes. Imported in main folder
 class Commands():
 	def mega(bot,update):
 		try:
@@ -250,6 +251,92 @@ class Commands():
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
+
+	def enterkeyattendance(bot,update):
+		try:
+			message = "Please enter your decryption key\n"
+			update.message.reply_text(message,parse_mode='HTML')
+			return DECRYPTTIMETABLE
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			return ConversationHandler.END
+
+
+	def decrypt_timetable(bot,update):
+		try:
+			with MongoClient(Tokens.mongo('live')) as client:
+				waitingmsg = "Currently decrypting and logging in \n"
+				waitingmsg += "This process can take up to 3 minutes\n"
+				waitingmsg += "Please wait.."
+				bot.sendMessage(chat_id=update.message.chat_id, text=waitingmsg,parse_mode='HTML')
+				bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+				db = client.timetable
+				uid = update.message.from_user.id
+				document = db.timetable.find_one({"telegram_id":uid})
+				encryptionkey = update.message.text
+				if not encryptionkey.strip():
+					message = "Please enter a proper key!"
+					bot.sendMessage(chat_id = update.message.chat_id, text=message,parse_mode='HTML')
+					return DECRYPTTIMETABLE
+				else:
+					if document is not None:
+						username = document['user_name']
+						encryptedpass = document['encrypted_pass']
+						decrypted = Encrypt().encrypt(encryptedpass,encryptionkey,"decrypt")
+						if decrypted.strip() != "":
+							resultlist = checkAttendance().checkatt(username,decrypted)
+							if resultlist:
+								message = "<b>Attendance Record</b>"
+								message += "\n🏫University: "
+								message += resultlist['University']
+								message += "\n📆Term: "
+								message += resultlist['Term']
+								message += "\n📚Program: "
+								message += resultlist['Program']
+								message += "\n"
+								message += "\n❇️ICA Attendance: "
+								message += resultlist['ICA attendance']
+								message += "\n❇️SIM Global Attendance: "
+								message += resultlist['SIM Global']
+								message += "\n❇️Partner University :"
+								message += resultlist['Partner Uni attendance']
+								message += "%\n"
+								try:
+									resultlist['Absent']
+								except KeyError:
+									pass
+								else:
+									for absentclass in resultlist['Absent']:
+										message += "\n📛<i>Class: </i>"
+										message += absentclass['name']
+										message += "\n📅Date:"
+										message += absentclass['date']
+										message += "\n🕰️Time: "
+										message += absentclass['time']
+								update.message.reply_text(message,parse_mode='HTML')
+							else:
+								message = "Unable to login \n"
+								message += "Are you sure that your credentials are correct? \n"
+								message += "Try to update your credentials using /register \n"
+								update.message.reply_text(message,parse_mode='HTML')
+							return ConversationHandler.END
+						else:
+							update.message.reply_text("You entered the wrong decryption key, please try again",parse_mode='HTML')
+							return DECRYPTTIMETABLE
+					else:
+						message = "Oops, something went wrong \n"
+						message += "We're dispatching a team of trained monkeys to look into this"
+						update.message.reply_text(decrypted,parse_mode='HTML')
+						return ConversationHandler.END
+
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			message = "Oops, something went wrong \n"
+			message += "We're dispatching a team of trained monkeys to look into this"
+			update.message.reply_text(decrypted,parse_mode='HTML')
 			return ConversationHandler.END
 
 	def cancel(bot,update):

@@ -41,7 +41,7 @@ class checkAttendance():
 
 	def navigate_attendance(self,driver,student_center_url):
 		driver.get(student_center_url)
-		clock.sleep(5)
+		clock.sleep(10)
 
 		# find the iframe
 		frame = driver.find_element_by_id("ptifrmtgtframe")
@@ -50,10 +50,10 @@ class checkAttendance():
 		#at student center page, click drop down
 		select = Select(driver.find_element_by_id("DERIVED_SSS_SCL_SSS_MORE_ACADEMICS"))
 		select.select_by_value('4030') #4030 is the value of the attendence selection.
-		clock.sleep(6)
+		clock.sleep(10)
 		gobtn = driver.find_element_by_id('DERIVED_SSS_SCL_SSS_GO_1')
 		gobtn.click()
-		clock.sleep(6)
+		clock.sleep(10)
 		#formatted_result = driver.page_source
 		#soup = BeautifulSoup(formatted_result,"html.parser")
 		returndict = {}
@@ -71,9 +71,9 @@ class checkAttendance():
 		formatted_result = driver.page_source
 		soup = BeautifulSoup(formatted_result,"html.parser")
 		icaspan = soup.find('span',{'id':'SM_CUSTOM_WRK_DESCR50$0'})
-		returndict['ICA attendance'] = icaspan.text if icaspan.text else "N/A"
+		returndict['ICA attendance'] = icaspan.text if icaspan else "N/A"
 		simglobalspan = soup.find('span',{'id':'SM_CUSTOM_WRK_DESCR50$1'})
-		returndict['SIM Global'] = simglobalspan.text
+		returndict['SIM Global'] = simglobalspan.text if simglobalspan else "N/A"
 		partnerspan = soup.find('span',{'id':'SM_CUSTOM_WRK_DESCR50$2'})
 		returndict['Partner Uni attendance'] = partnerspan.text
 		uniname = soup.find('span',{'id':'INSTITUTION_TBL_DESCR'})
@@ -107,7 +107,7 @@ class checkAttendance():
 		classbtn.click()
 		continuebtn = driver.find_element_by_id("SM_CUSTOM_WRK_SSR_PB_GO")
 		continuebtn.click()
-		clock.sleep(3)
+		clock.sleep(10)
 		#we are now in the class. lets find the attendance.
 		no_classes = self.getnoclasses(driver)
 		counter = 0
@@ -130,7 +130,7 @@ class checkAttendance():
 
 		backtbtn = driver.find_element_by_id("SM_CUSTOM_WRK_SSS_CHG_CLS_LINK")
 		backtbtn.click()
-		clock.sleep(3)
+		clock.sleep(10)
 
 	def getnoclasses(self,driver):
 		total_class = 0

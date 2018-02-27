@@ -1,0 +1,13 @@
+[Unit] 
+Description=SIM UOW TG Bot service
+After=multi-user.target 
+
+[Service]
+Type=idle
+WorkingDirectory = /home/elanor/ftp/files/timetable/
+User=root
+Group=root
+ExecStart=/usr/bin/python3 bot.py
+
+[Install]
+WantedBy=multi-user.target

@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python3.5
 #-*- coding: utf-8 -*-
 ##
 # Cronus init 
@@ -43,6 +43,7 @@ def Cronus():
 		fallbacks=[CommandHandler('cancel', Commands.cancel)],
 		per_user = 'true'
 	)
+	dispatcher.add_handler(conv_handler,1)
 	conv_handler = ConversationHandler(
 		entry_points=[CommandHandler('attendance', Commands.enterkeyattendance)],
 

@@ -10,6 +10,10 @@ Please read the [Disclaimer](DISCLAIMER.md) before proceeding.
 
 <img src="/time_table_bot_sample.gif" width="400">
 
+You should also take note that I wrote this code when I was learning python and it's definetly not a good way to write python.
+
+I will probably get around to refactoring this bot one day when I stop procrastinating.
+
 ## Why?
 
 ![Why?](https://i.imgur.com/7b3GTNU.png "Why?")

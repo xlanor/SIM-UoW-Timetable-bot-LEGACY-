@@ -8,6 +8,8 @@ This bot is **not** an official bot sanctioned by either the University of Wollo
 
 Please read the [Disclaimer](DISCLAIMER.md) before proceeding.
 
+<img src="/time_table_bot_sample.gif" width="400">
+
 ## Why?
 
 ![Why?](https://i.imgur.com/7b3GTNU.png "Why?")

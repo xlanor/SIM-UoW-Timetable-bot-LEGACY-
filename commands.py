@@ -16,6 +16,7 @@ from modules.testlogin import loginTest
 from modules.encryption import Encrypt
 from modules.riptimetable import SIMConnect
 from modules.checkattendance import checkAttendance
+from telegram.ext.dispatcher import run_async
 
 NAME,USERNAME,PASSWORD,KEY,ENTERKEY,DECRYPT,DELETEUSER,DECRYPTTIMETABLE = range(8) #declares states for hermes. Imported in main folder
 class Commands():
@@ -263,7 +264,7 @@ class Commands():
 			bot.sendMessage(chat_id=Tokens.channel('errorchannel'), text=str(catcherror),parse_mode='HTML')
 			return ConversationHandler.END
 
-
+	@run_async
 	def decrypt_timetable(bot,update):
 		try:
 			with MongoClient(Tokens.mongo('live')) as client:
@@ -308,6 +309,7 @@ class Commands():
 								except KeyError:
 									pass
 								else:
+									message += "\n<i>Missed class(es):</i>"
 									for absentclass in resultlist['Absent']:
 										message += "\n📛<i>Class: </i>"
 										message += absentclass['name']

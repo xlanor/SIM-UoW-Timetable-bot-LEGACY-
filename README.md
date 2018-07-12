@@ -1,5 +1,7 @@
 # Cronus
 
+Current rewrite ongoing: https://github.com/xlanor/SIM-UoW-Timetable-bot-v2
+
 Working name: Cronus
 
 A telegram bot for ripping timetables from SIM Connect built in python3
